@@ -1,5 +1,6 @@
 -----------------------------------------------------------------------------
-#**ueControls v6.1 - Set of instrumentation controls for Lazarus IDE**
+# ueControls v6.1
+## Set of instrumentation controls for Lazarus IDE
 - - -
 
 ![](https://sites.google.com/site/mikroelectronica/uecontrols/toobar.png)
@@ -8,8 +9,8 @@ Open source set of instrumentation controls for Lazarus and Free Pascal,
 compilable under Windows and Linux.
 
 Author: Miguel A. Risco-Castillo  
-[GRUPO DE MICROELECTRÓNICA](http://ue.accesus.com "http://ue.accesus.com")  
-Lima – Perú   
+[GRUPO DE MICROELECTRÃ“NICA](http://ue.accesus.com "http://ue.accesus.com")  
+Lima â€“ PerÃº   
   
 For use these controls you must first download the graphics library **BGRABitmap**:  
 <http://wiki.lazarus.freepascal.org/BGRABitmap>  
