@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
-# ueControls v6.1
-## Set of instrumentation controls for Lazarus IDE
+# ueControls v6.1 
+**Set of instrumentation controls for Lazarus IDE**
 - - -
 
 ![](https://sites.google.com/site/mikroelectronica/uecontrols/toobar.png)
@@ -14,7 +14,7 @@ Lima – Perú
   
 For use these controls you must first download the graphics library **BGRABitmap**:  
 <http://wiki.lazarus.freepascal.org/BGRABitmap>  
-<http://sourceforge.net/projects/lazpaint/files/src/>  
+<https://github.com/bgrabitmap/bgrabitmap>  
 
 **Important:**  
   To install uEControls you must first remove **BGRAControls**, it have an old version
