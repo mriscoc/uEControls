@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEButton v1.3 2018-02-03
+  uEButton v1.4 2018-02-04
   Author: Miguel A. Risco-Castillo
   This is an Alpha version
 
@@ -13,7 +13,9 @@
   - shadow for text (use clNone for disable shadow)
   - redraw when properties (caption, font, etc.) are changed
 
-    
+  v1.4 2018-02-04
+  - support for load skin and glyph image from bgrabitmap
+
   v1.3 2018-02-03
   - support for new uebase version
     
@@ -235,6 +237,8 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure LoadGlyphFromFile(f: string);
     procedure LoadImageFromFile(f: string);
+    procedure LoadGlyphFromBGRA(bm: TBGRABitmap);
+    procedure LoadImageFromBGRA(bm: TBGRABitmap);
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);virtual;
@@ -1292,6 +1296,16 @@ procedure TuECustomImageButton.LoadImageFromFile(f: string);
 begin
   BitmapFile:=f;
   LoadFromBitmapFile;
+end;
+
+procedure TuECustomImageButton.LoadGlyphFromBGRA(bm: TBGRABitmap);
+begin
+  AssignBGRAtoImage(bm,FGlyph);
+end;
+
+procedure TuECustomImageButton.LoadImageFromBGRA(bm: TBGRABitmap);
+begin
+  AssignBGRAtoImage(bm,FImage);
 end;
 
 procedure TuECustomImageButton.SaveToFile(AFileName: string);
