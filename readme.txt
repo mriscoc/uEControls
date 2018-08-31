@@ -1,5 +1,5 @@
 {-----------------------------------------------------------------------------
-  ueControls v6.1 - Set of instrumentation controls for Lazarus IDE.
+  ueControls v6.2 - Set of instrumentation controls for Lazarus IDE.
 
   Open source set of instrumentation controls for Lazarus and Free Pascal,
   compilable under Windows and Linux.

@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  TuERotImage v1.2  2018-01-16
+  TuERotImage v1.3  2018-08-30
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -20,6 +20,9 @@
   the specific language governing rights and limitations under the Licenses.
 
   Release Notes
+
+  v1.3
+  Fix offset (changes in BGRABitmap PutImageAngle)
 
   v1.2
   Fix loadfromfile
@@ -233,12 +236,16 @@ begin
   end;
   w:=tbmp.width;
   h:=tbmp.height;
-  xc:=w/2;
-  yc:=h/2;
+//  xc:=w/2;
+//  yc:=h/2;
+  xc:=w/2-0.5;
+  yc:=h/2-0.5;
   if FCenter then
   begin
-    ox:=xc+(Bitmap.Width-w)/2-0.5;
-    oy:=yc+(Bitmap.Height-h)/2-0.5;
+//    ox:=xc+(Bitmap.Width-w)/2-0.5;
+//    oy:=yc+(Bitmap.Height-h)/2-0.5;
+    ox:=xc+(Bitmap.Width-w)/2;
+    oy:=yc+(Bitmap.Height-h)/2;
   end else
   begin
     ox:=FOffsetX;

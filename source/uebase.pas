@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEBase v1.2  2018-01-18
+  uEBase v1.2.1  2018-08-30
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -17,6 +17,13 @@
   Software distributed under the Licenses is distributed on an "AS IS" basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses.
+  
+  Release Notes
+  
+  v1.2.1 2018-08-30
+  Update cAbout
+  
+  v1.2.0 2018-01-18  
 ------------------------------------------------------------------------------}
 
 unit uEBase;
@@ -29,7 +36,7 @@ uses
   Classes, SysUtils, Controls, LCLProc, LCLType, Graphics, BGRABitmap, BGRABitmapTypes;
 
 const
-  cAbout='uEControls v6.0 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
+  cAbout='uEControls v6.2 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
 
 type
 
@@ -213,9 +220,9 @@ end;
 
 procedure TuEBaseControl.Paint;
 begin
-  inherited Paint;
   if (csCreating in FControlState) or IsUpdating then Exit;
   DrawControl;
+  inherited Paint;
 end;
 
 procedure TuEBaseControl.DrawControl;
@@ -299,7 +306,6 @@ end;
 procedure TuEBaseControl.ReDraw;
 begin
   RenderControl;
-  Invalidate;
 end;
 
 end.

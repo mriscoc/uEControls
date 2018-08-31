@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
-# ueControls v6.1 
+# ueControls v6.2 
 **Set of instrumentation controls for Lazarus IDE**
 - - -
 

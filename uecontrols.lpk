@@ -50,7 +50,7 @@
   Software distributed under the Licenses is distributed on an &quot;AS IS&quot; basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses. "/>
-    <Version Major="6" Minor="1" Release="2" Build="340"/>
+    <Version Major="6" Minor="2" Release="3" Build="340"/>
     <Files Count="12">
       <Item1>
         <Filename Value="source/uecontrolsreg.pas"/>
