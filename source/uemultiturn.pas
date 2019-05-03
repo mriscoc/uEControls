@@ -1,5 +1,5 @@
 {-----------------------------------------------------------------------------
-  TuEMultiTurn v0.3 2018-02-03
+  TuEMultiTurn v0.4 03/05/2019
   Author: Miguel A. Risco Castillo
   http://ue.accesus.com/uecontrols
 
@@ -15,6 +15,12 @@
   Software distributed under the Licenses is distributed on an "AS IS" basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses.
+
+  Release notes:
+
+  v0.4 03/05/2019
+  Remove deprecated property: TPicture
+
 -----------------------------------------------------------------------------}
 
 unit uEMultiTurn;
@@ -58,8 +64,6 @@ type
   private
   published
     property Debug;
-//  This property is deprecated, use Image and LoadfromFile
-    property Picture;
     property Image;
     property BackImage;
     property Position;

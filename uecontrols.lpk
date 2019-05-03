@@ -50,8 +50,8 @@
   Software distributed under the Licenses is distributed on an &quot;AS IS&quot; basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses. "/>
-    <Version Major="6" Minor="2" Release="3" Build="340"/>
-    <Files Count="12">
+    <Version Major="6" Minor="4" Release="1" Build="349"/>
+    <Files Count="13">
       <Item1>
         <Filename Value="source/uecontrolsreg.pas"/>
         <HasRegisterProc Value="True"/>
@@ -111,6 +111,10 @@
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uETilePanel"/>
       </Item12>
+      <Item13>
+        <Filename Value="source/ueimage.pas"/>
+        <UnitName Value="uEImage"/>
+      </Item13>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
@@ -127,7 +131,6 @@
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
     </PublishOptions>
     <CustomOptions Items="ExternHelp" Version="2">
       <_ExternHelp Items="Count"/>

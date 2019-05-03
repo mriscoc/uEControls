@@ -27,7 +27,8 @@ interface
 
 uses
   Classes,LResources,
-  uerotimage, ueknob, uemultiturn, ueselector, ueled, uebutton, uegauge, uetileimage, uetilepanel;
+  uerotimage, ueknob, uemultiturn, ueselector, ueled, uebutton, uegauge,
+  ueimage, uetileimage, uetilepanel;
 
 procedure Register;
 
@@ -37,7 +38,7 @@ procedure Register;
 begin
   {$i uecontrols.lrs}
   RegisterComponents('uEControls', [TuERotImage,TuEKnob,TuEMultiTurn,TuESelector,TuELED,TuEButton,TuEGauge,
-                                    TuETileImage,TuETilePanel]);
+                                    TuEImage, TuETileImage,TuETilePanel]);
 end;
 
 end.

@@ -1,5 +1,5 @@
 {-----------------------------------------------------------------------------
-  TuESelector v1.2 2018-02-03
+  TuESelector v1.3 03/05/2019
   Author: Miguel A. Risco Castillo
   http://ue.accesus.com/uecontrols
 
@@ -15,6 +15,12 @@
   Software distributed under the Licenses is distributed on an "AS IS" basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses.
+
+  Release notes:
+
+  v1.3 03/05/2019
+  Remove deprecated property: TPicture
+
 -----------------------------------------------------------------------------}
 
 unit uESelector;
@@ -53,8 +59,6 @@ type
   TuESelector = class(TCustomuESelector)
   published
     property Debug;
-//  This property is deprecated, use Image and LoadfromFile
-    property Picture;
     property MaxAngle;
     property MinAngle;
     property OffsetAngle;

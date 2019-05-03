@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  TuERotImage v1.3  2018-08-30
+  TuERotImage v1.5  2019-05-03
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -20,6 +20,13 @@
   the specific language governing rights and limitations under the Licenses.
 
   Release Notes
+
+  v1.5 03/05/2019
+  Remove deprecated property: TPicture
+  Change default transparency mode
+
+  v1.4 15/04/2019
+  Add default nil value to temporary image in loadfromfile
 
   v1.3
   Fix offset (changes in BGRABitmap PutImageAngle)
@@ -49,7 +56,6 @@ type
     FOffsetX: integer;
     FOffsetY: integer;
     FOnImageChanged: TNotifyEvent;
-    FPicture: TPicture;
     FStretch: Boolean;
     FCenter: Boolean;
     FProportional: Boolean;
@@ -71,7 +77,6 @@ type
   protected
     class procedure WSRegisterClass; override;
     procedure ImageChanged(Sender : TObject); virtual;
-    procedure DeprecatedPictureChanged(Sender:TObject);
     procedure CalculatePreferredSize(var PreferredWidth,
                                      PreferredHeight: integer;
                                      WithThemeSpace: Boolean); override;
@@ -81,7 +86,6 @@ type
     procedure RenderControl; override;
     procedure DoRotation; virtual;
     procedure DoBeforeRotation; virtual;
-    procedure SetPicture(AValue: TPicture);
     property Canvas: TCanvas read GetCanvas;
     property MaxSize: Integer read FMaxSize;
     property Angle: Extended read FAngle write SetAngle;
@@ -96,8 +100,6 @@ type
     property OnImageChanged: TNotifyEvent read FOnImageChanged write FOnImageChanged;
     property OnRotation: TNotifyEvent read FOnRotation write FOnRotation;
     property OnBeforeRotation: TNotifyEvent read FOnBeforeRotation write FOnBeforeRotation;
-    //  This property is deprecated, use Image and LoadfromFile
-    property Picture:TPicture read FPicture write SetPicture;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -160,8 +162,6 @@ type
     property OnBeforeRotation;
     property OnStartDock;
     property OnStartDrag;
-    //  This property is deprecated, use Image and LoadfromFile
-    property Picture:TPicture read FPicture write SetPicture;
   public
   end;
 
@@ -183,28 +183,23 @@ begin
   FStretch := False;
   FUniqueSize := False;
   FImage := TBitmap.Create;
-  FImage.Canvas.Pixels[0,0]:=clblack;
-  FImage.TransparentColor:=clFuchsia;
+  FImage.TransparentMode:= tmFixed;
+  //FImage.Canvas.Pixels[0,0]:=clblack;
+  //FImage.TransparentColor:=clFuchsia;
   FImage.OnChange := @ImageChanged;
   with GetControlClassDefaultSize do SetInitialBounds(0, 0, CX, CY);
-  //Deprecated:
-  FPicture := TPicture.Create;
-  FPicture.OnChange:=@DeprecatedPictureChanged;
 end;
 
 destructor TCustomuERotImage.Destroy;
 begin
   FImage.OnChange := nil;
   FreeThenNil(FImage);
-  //Deprecated:
-  FPicture.OnChange:=nil;
-  FreeThenNil(FPicture);
   inherited Destroy;
 end;
 
 function TCustomuERotImage.LoadFromFile(f: string): boolean;
 var
-  tbmp:TBGRABitmap;
+  tbmp:TBGRABitmap=nil;
 begin
   result:=false;
   try
@@ -255,7 +250,7 @@ begin
   begin
     Bitmap.Rectangle(0,0,Bitmap.Width,Bitmap.Height,ColorToBGRA(clBlue),dmSet);
   end;
-  Bitmap.PutImageAngle(ox,oy,tbmp,FAngle,xc,yc);
+  Bitmap.PutImageAngle(ox,oy,tbmp,FAngle,xc,yc,255,true,true);
   if assigned (tbmp) then tbmp.free;
   //
   DoRotation;
@@ -334,13 +329,6 @@ begin
   RenderControl;
 end;
 
-//Deprecated
-procedure TCustomuERotImage.SetPicture(AValue: TPicture);
-begin
-  if FPicture=AValue then Exit;
-  FPicture:=AValue;
-end;
-
 procedure TCustomuERotImage.SetStretch(const AValue: Boolean);
 begin
   if FStretch = AValue then exit;
@@ -385,16 +373,6 @@ begin
   RenderControl;
   if Assigned(OnImageChanged) then OnImageChanged(Self);
   FImage.OnChange := @ImageChanged;
-end;
-
-procedure TCustomuERotImage.DeprecatedPictureChanged(Sender: TObject);
-begin
-  if assigned(FPicture.Bitmap) and (FPicture.Bitmap.Width>0) then
-  begin
-    Image.Assign(FPicture.Bitmap);
-    ShowMessage('The property "Picture" is deprecated, use Image');
-    FPicture.Clear;
-  end;
 end;
 
 procedure TCustomuERotImage.CalculatePreferredSize(var PreferredWidth,

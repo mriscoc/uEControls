@@ -36,7 +36,7 @@ uses
   Classes, SysUtils, Controls, LCLProc, LCLType, Graphics, BGRABitmap, BGRABitmapTypes;
 
 const
-  cAbout='uEControls v6.2 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
+  cAbout='uEControls v6.3 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
 
 type
 
@@ -90,6 +90,7 @@ function Darken(Color:TColor; Percent:Byte):TBGRAPixel;
 implementation
 
 {support}
+
 procedure AssignFontToBGRA(Source: TFont; Dest: TBGRABitmap);
 begin
   Dest.FontAntialias := True;
@@ -164,8 +165,11 @@ end;
 procedure TuEBaseControl.SetBitmap(AValue: TBGRABitmap);
 begin
   if FBitmap=AValue then Exit;
+  if assigned(FBitmap) then FreeAndNil(FBitmap); //<<< OJO debería evitar Memory leaks
   FBitmap:=AValue;
-  Invalidate;
+//FBitmap es interno, si se cambia, el control debe de redibujarse
+//manualmente en el momento apropiado:
+//  Invalidate; <<< No habilitar
 end;
 
 procedure TuEBaseControl.SetDebug(AValue: boolean);

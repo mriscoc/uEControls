@@ -169,12 +169,12 @@ begin
   yc:=h/2;
   Bitmap.SetSize(w,h);
   Bitmap.Fill(BGRAPixelTransparent);
-  Bitmap.FillEllipseAntialias(xc,yc,r,r,ColorToBGRA(clcream));
+  Bitmap.FillEllipseAntialias(xc-0.5,yc-0.5,r-0.5,r-0.5,ColorToBGRA(clcream));
   Bitmap.GradientFill(0,0,w,h,
                       ColorToBGRA(clWhite),BGRA(255,255,192,1),
                       gtRadial,PointF(xc,yc),PointF(xc+r,yc),
                       dmDrawWithTransparency, true);
-  Bitmap.EllipseAntialias(xc,yc,r-0.5,r-0.5,BGRABlack,2);
+  Bitmap.EllipseAntialias(xc-0.5,yc-0.5,r-0.5,r-0.5,BGRABlack,2);
   AssignBGRAtoImage(Bitmap,BackImage);
 end;
 

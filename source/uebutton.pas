@@ -1,7 +1,6 @@
 {------------------------------------------------------------------------------
-  uEButton v1.4 2018-02-04
+  uEButton v1.5 2018-11-04
   Author: Miguel A. Risco-Castillo
-  This is an Alpha version
 
   Forked from BCImageButton of BGRAControls, Author: Lainz.
 
@@ -13,6 +12,12 @@
   - shadow for text (use clNone for disable shadow)
   - redraw when properties (caption, font, etc.) are changed
 
+  v1.5 2018-11-04
+  - Improved Animation
+  - Convert glyph and caption to grayscale when the control is disabled.
+  - Verification of fileexists before to attempt to LoadImageFromFile and
+    LoadGlyphFromFile.
+  
   v1.4 2018-02-04
   - support for load skin and glyph image from bgrabitmap
 
@@ -43,12 +48,15 @@
 unit uEButton;
 
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, LResources, LMessages, ExtCtrls,
-  Types, LCLProc, uEBase, BGRABitmap, BGRABitmapTypes, BGRASliceScaling;
+  Classes, SysUtils, Forms, Dialogs, Controls, Graphics, LResources, LMessages, ExtCtrls,
+  Types,
+  uEBase,
+  BGRABitmap, BGRABitmapTypes, BGRASliceScaling;
 
 type
   TuEButtonLayout =  (blGlyphLeft,blGlyphRight,blGlyphTop,blGlyphBottom); 
@@ -167,6 +175,36 @@ type
     procedure Assign(Source: TPersistent); override;
   end;
 
+  { TFading }
+
+  TFadingMode = (fmSuspended, fmFadeIn, fmFadeOut, fmFadeInCycle, fmFadeOutCycle, fmFadeInOut, fmFadeOutIn);
+
+  TFading = record
+  private
+    FAlpha: byte;
+    FMode: TFadingMode;
+    FAlphaStep: byte;
+    FDuration: integer;
+    FPrevDate: TDateTime;
+    FElapsedMsAccumulator: integer;
+  public
+    procedure SetFAlpha(AValue: byte);
+    procedure SetFMode(AValue: TFadingMode);
+    procedure SetFAlphaStep(AValue: byte);
+    procedure SetFDuration(AValue: integer);
+  public
+    function Execute(AStepCount: integer= 1): byte; // execute and return new alpha
+    function Reset: byte;   // reset and return new alpha
+    procedure PutImage(ADestination: TBGRACustomBitmap; AX,AY: integer; ASource: TBGRACustomBitmap);
+    procedure FillRect(ADestination: TBGRACustomBitmap; ARect: TRect; AColor: TBGRAPixel);
+  public
+    property Alpha: byte read FAlpha write SetFAlpha;
+    property Mode: TFadingMode read FMode write SetFMode;
+    property Step: byte read FAlphaStep write SetFAlphaStep;
+    property Duration: integer read FDuration write SetFDuration;
+  end;
+
+
   { TuECustomImageButton }
 
   TuECustomImageButton = class(TuEGraphicButton)
@@ -181,24 +219,26 @@ type
     FLayout: TuEButtonLayout;
     FOnGlyphChanged: TNotifyEvent;
     FOnImageChanged: TNotifyEvent;
+    FShowAccelChar: boolean;
     FSpacing: integer;
     FTextShadowColor: Tcolor;
     FTimer: TTimer;
-//    FFade: TFading;
+    FFade: TFading;
     FAnimation: boolean;
     FBitmapFile: string;
     FTextVisible: boolean;
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TuEButtonSliceScalingOptions);
-//    procedure Fade(Sender: TObject);
+    procedure Fade({%H-}Sender: TObject);
     procedure SetFTextVisible(AValue: boolean);
     procedure SetGlyph(AValue: TBitmap);
     procedure SetImage(AValue: TBitmap);
     procedure SetLayout(AValue: TuEButtonLayout);
+    procedure SetShowAccelChar(AValue: boolean);
     procedure SetSpacing(AValue: integer);
     procedure SetTextShadowColor(AValue: Tcolor);
-    procedure CMTextChanged(var Message: TLMessage); message CM_TEXTCHANGED;
+    procedure CMTextChanged(var {%H-}Message: TLMessage); message CM_TEXTCHANGED;
   protected
     { Protected declarations }
     procedure DrawControl; override;
@@ -227,12 +267,14 @@ type
     property TextShadowColor:Tcolor read FTextShadowColor write SetTextShadowColor;
     property Spacing:integer read FSpacing write SetSpacing;
     property Layout:TuEButtonLayout read FLayout write SetLayout;
-
+    property ShowAccelChar:boolean read FShowAccelChar write SetShowAccelChar default False;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { Draw and use Default Image }
     procedure DefaultImage;
     { It loads the 'BitmapFile' }
+    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar); overload;
+    procedure LoadFromBitmapResource(Resource: string); overload;
     procedure LoadFromBitmapFile;
     procedure Assign(Source: TPersistent); override;
     procedure LoadGlyphFromFile(f: string);
@@ -243,7 +285,7 @@ type
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);virtual;
     procedure AssignFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
     { Published declarations }
@@ -253,9 +295,7 @@ type
   published
     property Debug;
     property Image;
-    property OnImageChanged;
     property Glyph;
-    property OnGlyphChanged;
     property Layout;
     property TextShadowColor;
     property Spacing;
@@ -277,12 +317,26 @@ type
     property Enabled;
     property Font;
     property ModalResult;
+    property ParentBidiMode;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property TextVisible;
+    property ShowAccelChar;
+    //property Toggle;
+    property Visible;
+    { The About property must not be removed to follow the licence statements }
+    property About;
     property OnChangeBounds;
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
+    property OnGlyphChanged;
+    property OnImageChanged;
     property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
@@ -293,17 +347,6 @@ type
     property OnMouseWheelUp;
     property OnResize;
     property OnStartDrag;
-    property ParentBidiMode;
-    property ParentColor;
-    property ParentFont;
-    property ParentShowHint;
-    property PopupMenu;
-//    property Shadow;
-    property ShowHint;
-    property TextVisible;
-    //property Toggle;
-    property Visible;
-    property About;// This property must not be removed to follow the licence statements
   end;
 
 { support functions }
@@ -752,13 +795,143 @@ begin
   DoMouseLeave;
 end;
 
+{ TFading }
+
+procedure TFading.SetFAlpha(AValue: byte);
+begin
+  if FAlpha = AValue then
+    Exit;
+  FAlpha := AValue;
+end;
+
+procedure TFading.SetFMode(AValue: TFadingMode);
+begin
+  if FMode = AValue then
+    Exit;
+  FMode := AValue;
+  FPrevDate:= 0;
+end;
+
+procedure TFading.SetFAlphaStep(AValue: byte);
+begin
+  if FAlphaStep = AValue then
+    Exit
+  else
+    FAlphaStep := AValue;
+end;
+
+procedure TFading.SetFDuration(AValue: integer);
+begin
+  FDuration:= AValue;
+end;
+
+function TFading.Execute(AStepCount: integer= 1): byte;
+var curDate: TDateTime;
+  alphaStep: byte;
+  timeGrain: integer;
+begin
+  if FAlphaStep <= 0 then
+    alphaStep := 1
+  else
+    alphaStep := FAlphaStep;
+
+  if FDuration > 0 then
+  begin
+    curDate := Now;
+    if FPrevDate = 0 then
+    begin
+      FPrevDate := curDate;
+      FElapsedMsAccumulator := 0;
+      result := FAlpha;
+      exit;
+    end;
+
+    inc(FElapsedMsAccumulator, round((curDate-FPrevDate)*(24*60*60*1000)) );
+    timeGrain := round(FDuration*alphaStep/255);
+    if timeGrain <= 0 then timeGrain := 1;
+    AStepCount := FElapsedMsAccumulator div timeGrain;
+    FElapsedMsAccumulator:= FElapsedMsAccumulator mod timeGrain;
+    FPrevDate := curDate;
+  end;
+
+  if AStepCount < 0 then AStepCount := 0
+  else if AStepCount > 255 then AStepCount := 255;
+
+  case FMode of
+    fmFadeIn, fmFadeInOut, fmFadeInCycle:
+    begin
+      if (FAlpha = 255) and (FMode = fmFadeInCycle) then
+        FAlpha := 0
+      else
+      if FAlpha + alphaStep*AStepCount >= 255 then
+      begin
+        FAlpha := 255;
+        if FMode = fmFadeInOut then
+          FMode := fmFadeOutIn
+        else if FMode <> fmFadeInCycle then
+          FMode := fmSuspended;
+      end
+      else
+        FAlpha += alphaStep*AStepCount;
+    end;
+    fmFadeOut,fmFadeOutIn, fmFadeOutCycle:
+    begin
+      if (FAlpha = 0) and (FMode = fmFadeOutCycle) then
+        FAlpha := 255
+      else
+      if FAlpha - alphaStep*AStepCount <= 0 then
+      begin
+        FAlpha := 0;
+        if FMode = fmFadeOutIn then
+          FMode := fmFadeInOut
+        else if FMode <> fmFadeOutCycle then
+          FMode := fmSuspended;
+      end
+      else
+        FAlpha -= alphaStep*AStepCount;
+    end;
+  end;
+
+  Result := FAlpha;
+end;
+
+function TFading.Reset: byte;
+begin
+  case FMode of
+    fmFadeIn, fmFadeInOut:
+    begin
+      FAlpha := 0;
+    end;
+    fmFadeOut,fmFadeOutIn:
+    begin
+      FAlpha := 255;
+    end;
+  end;
+  Result := FAlpha;
+  FPrevDate := 0;
+end;
+
+procedure TFading.PutImage(ADestination: TBGRACustomBitmap; AX, AY: integer;
+  ASource: TBGRACustomBitmap);
+begin
+  ADestination.PutImage(AX,AY,ASource,dmDrawWithTransparency,Alpha);
+end;
+
+procedure TFading.FillRect(ADestination: TBGRACustomBitmap; ARect: TRect;
+  AColor: TBGRAPixel);
+begin
+  ADestination.FillRect(ARect, BGRA(AColor.red,AColor.green,AColor.blue,AColor.alpha*Alpha div 255),dmDrawWithTransparency);
+end;
+
 { TuECustomImageButton }
 
-//procedure TuECustomImageButton.Fade(Sender: TObject);
-//begin
-//  if FFade.Mode <> fmSuspended then
-//    Invalidate;
-//end;
+procedure TuECustomImageButton.Fade(Sender: TObject);
+begin
+  if FFade.Mode <> fmSuspended then
+  begin
+    Invalidate;
+  end;
+end;
 
 procedure TuECustomImageButton.SetFTextVisible(AValue: boolean);
 begin
@@ -784,6 +957,13 @@ procedure TuECustomImageButton.SetLayout(AValue: TuEButtonLayout);
 begin
   if FLayout=AValue then Exit;
   FLayout:=AValue;
+  RenderControl;
+end;
+
+procedure TuECustomImageButton.SetShowAccelChar(AValue: boolean);
+begin
+  if FShowAccelChar=AValue then Exit;
+  FShowAccelChar:=AValue;
   RenderControl;
 end;
 
@@ -830,8 +1010,8 @@ begin
 end;
 
 procedure TuECustomImageButton.DrawControl;
-//var
-//  temp: TBGRABitmap;
+var
+  temp: TBGRABitmap;
 begin
   if (Color <> clDefault) and (Color <> clNone) then
   begin
@@ -842,18 +1022,16 @@ begin
   if Enabled then
   begin
     case FState of
-      gbsNormal:FBGRANormal.Draw(Canvas, FDestRect.Left,
-          FDestRect.Top, False);
-      gbsHover: FBGRAHover.Draw(Canvas, FDestRect.Left,
+      gbsNormal, gbsHover: FBGRANormal.Draw(Canvas, FDestRect.Left,
           FDestRect.Top, False);
       gbsActive: FBGRAActive.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
     end;
 
-//    temp := TBGRABitmap.Create(Width, Height);
-//    FFade.Execute;
-//    FFade.PutImage(temp, 0, 0, FBGRAHover);
-//    temp.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
-//    temp.Free;
+    temp := TBGRABitmap.Create(Width, Height);
+    FFade.Execute;
+    FFade.PutImage(temp, 0, 0, FBGRAHover);
+    temp.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
+    temp.Free;
   end
   else
     FBGRADisabled.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
@@ -870,18 +1048,32 @@ end;
 
 procedure TuECustomImageButton.RenderControl;
 
-  procedure DrawGlyphnCaption(ABitmap: TBGRABitmap);
+  procedure DrawGlyphnCaption(ABitmap: TBGRABitmap; Greyed:boolean);
   var
     gx,gy,tx,ty:integer;
     ts:TSize;
     cptn:string;
+    AChar,AWidth:integer;
+    FCol,SCol:TBGRAPixel;
   begin
     cptn:=caption;
-    tx:=pos('&',cptn);
-    if tx<>0 then delete(cptn,tx,1);
+    AChar:=pos('&',cptn);
+    if FShowAccelChar and (AChar<>0) then delete(cptn,AChar,1);
     Bitmap.Assign(FGlyph);
     AssignFontToBGRA(Font, ABitmap);
-    ts:=ABitmap.TextSize(cptn);
+    if TextVisible then ts:=ABitmap.TextSize(cptn) else
+    begin
+      ts.cx:=0;
+      ts.cy:=0;
+    end;
+    If not Greyed then begin
+      FCol:=ColorToBGRA(ColorToRGB(Font.Color));
+      SCol:=ColorToBGRA(ColorToRGB(TextShadowColor));
+    end else
+    Begin
+      FCol:=ColorToBGRA(ColorToRGB(Font.Color)).ToGrayscale();
+      SCol:=ColorToBGRA(ColorToRGB(TextShadowColor)).ToGrayscale();
+    end;
     case FLayout of
       blGlyphTop:begin
         gx:=(Width-Bitmap.Width) div 2;
@@ -908,9 +1100,22 @@ procedure TuECustomImageButton.RenderControl;
         ty:=(Height-ts.cy) div 2;
       end;
     end;
+
+    if Greyed then SetBitmap(TBGRABitmap(Bitmap.FilterGrayscale));
+    //if Greyed then Bitmap.Assign(Bitmap.FilterGrayscale);
     ABitmap.PutImage(gx,gy,Bitmap,dmDrawWithTransparency);
-    if TextShadowColor<>clNone then ABitmap.TextOut(tx+1,ty+1,cptn,ColorToBGRA(ColorToRGB(TextShadowColor)));
-    ABitmap.TextOut(tx,ty,cptn,ColorToBGRA(ColorToRGB(Font.Color)));
+    if TextVisible then
+    begin
+      if TextShadowColor<>clNone then ABitmap.TextOut(tx+1,ty+1,cptn,SCol);
+      ABitmap.TextOut(tx,ty,cptn,FCol);
+      if FShowAccelChar and (AChar<>0) and (AChar<>length(caption))then
+      begin
+        AWidth:=ABitmap.TextSize(Copy(cptn,AChar,1)).cx;
+        AChar:=ABitmap.TextSize(LeftStr(cptn,AChar)).cx;
+        if TextShadowColor<>clNone then ABitmap.DrawHorizLine(tx+AChar-AWidth+1,ty+ts.cy-1,tx+AChar,SCol);
+        ABitmap.DrawHorizLine(tx+AChar-AWidth,ty+ts.cy-2,tx+AChar-1,FCol);
+      end;
+    end;
   end;
 
 var
@@ -997,18 +1202,14 @@ begin
       dmSet);
     FBGRAActive.Rectangle(0, 0, Width, Height, BGRAWhite, BGRA(192, 220, 255, 128),
       dmSet);
-    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRA(100,100,100), BGRA(192, 192, 192, 64),
+    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRA(192,192,192), BGRA(192, 192, 192, 64),
       dmSet);
   end;
 
-  if TextVisible then
-  begin
-    { Draw Text }
-    DrawGlyphnCaption(FBGRANormal);
-    DrawGlyphnCaption(FBGRAHover);
-    DrawGlyphnCaption(FBGRAActive);
-    DrawGlyphnCaption(FBGRADisabled);
-  end;
+  DrawGlyphnCaption(FBGRANormal,false);
+  DrawGlyphnCaption(FBGRAHover,false);
+  DrawGlyphnCaption(FBGRAActive,false);
+  DrawGlyphnCaption(FBGRADisabled,true);
 
   {$IFDEF DEBUG}
   FRenderCount += 1;
@@ -1129,12 +1330,11 @@ end;
 
 procedure TuECustomImageButton.DoMouseDown;
 begin
-  //FFade.Mode := fmFadeOut;
-  //
-  //if Animation then
-  //  FFade.Step := 60
-  //else
-  //  FFade.Step := 255;
+  FFade.Mode := fmFadeOut;
+  if FAnimation then
+    FFade.Step := 60
+  else
+    FFade.Step := 255;
 
   inherited DoMouseDown;
 end;
@@ -1143,12 +1343,11 @@ procedure TuECustomImageButton.DoMouseUp;
 var
   Ctrl : TControl;
 begin
-  //FFade.Mode := fmFadeIn;
-  //
-  //if Animation then
-  //  FFade.Step := 20
-  //else
-  //  FFade.Step := 255;
+  FFade.Mode := fmFadeIn;
+  if FAnimation then
+    FFade.Step := 20
+  else
+    FFade.Step := 255;
 
   Ctrl := Application.GetControlAtMouse;
   if Ctrl = Self then
@@ -1161,24 +1360,22 @@ end;
 
 procedure TuECustomImageButton.DoMouseEnter;
 begin
-  //FFade.Mode := fmFadeIn;
-  //
-  //if Animation then
-  //  FFade.Step := 15
-  //else
-  //  FFade.Step := 255;
+  FFade.Mode := fmFadeIn;
+  if FAnimation then
+    FFade.Step := 15
+  else
+    FFade.Step := 255;
 
   inherited DoMouseEnter;
 end;
 
 procedure TuECustomImageButton.DoMouseLeave;
 begin
-  //FFade.Mode := fmFadeOut;
-  //
-  //if Animation then
-  //  FFade.Step := 8
-  //else
-  //  FFade.Step := 255;
+  FFade.Mode := fmFadeOut;
+  if FAnimation then
+    FFade.Step := 8
+  else
+    FFade.Step := 255;
 
   inherited DoMouseLeave;
 end;
@@ -1206,43 +1403,56 @@ begin
     with GetControlClassDefaultSize do
       SetInitialBounds(0, 0, CX, CY);
     ControlStyle := ControlStyle + [csAcceptsControls];
-
     FBitmapOptions := TuEButtonSliceScalingOptions.Create(Self);
-    //FFade.Step := 15;
-    //FFade.Mode := fmFadeOut;
-    //FTimer := TTimer.Create(Self);
-    //FTimer.Interval := 15;
-    //FTimer.OnTimer := @Fade;
-    FAnimation := False;
-    FTextVisible := True;
 
+    FFade.Step := 15;
+    FFade.Mode := fmFadeOut;
+    FTimer := TTimer.Create(Self);
+    FTimer.Interval := 15;
+    FTimer.OnTimer := @Fade;
+    FAnimation := True;
+
+    FTextVisible := True;
+    FShowAccelChar := False;
   finally
     Exclude(FControlState, csCreating);
     EnableAutoSizing;
-    //DefaultImage;
     EndUpdate;
   end;
 end;
 
 destructor TuECustomImageButton.Destroy;
 begin
-  FTimer.Free;
-  if FBGRAMultiSliceScaling <> nil then
-    FreeAndNil(FBGRAMultiSliceScaling);
-  if FBGRANormal <> nil then
-    FreeAndNil(FBGRANormal);
-  if FBGRAHover <> nil then
-    FreeAndNil(FBGRAHover);
-  if FBGRAActive <> nil then
-    FreeAndNil(FBGRAActive);
-  if FBGRADisabled <> nil then
-    FreeAndNil(FBGRADisabled);
-  FreeAndNil(FBitmapOptions);
+  if assigned(FBGRAMultiSliceScaling) then FreeAndNil(FBGRAMultiSliceScaling);
+  if assigned(FBGRANormal) then FreeAndNil(FBGRANormal);
+  if assigned(FBGRAHover) then FreeAndNil(FBGRAHover);
+  if assigned(FBGRAActive) then FreeAndNil(FBGRAActive);
+  if assigned(FBGRADisabled) then FreeAndNil(FBGRADisabled);
+  if assigned(FBitmapOptions) then FreeAndNil(FBitmapOptions);
   FImage.OnChange := nil;
-  FreeThenNil(FImage);
+  FreeAndNil(FImage);
   FGlyph.OnChange := nil;
-  FreeThenNil(FGlyph);
+  FreeAndNil(FGlyph);
   inherited Destroy;
+end;
+
+procedure TuECustomImageButton.LoadFromBitmapResource(Resource: string;
+  ResourceType: PChar);
+var
+  res: TResourceStream;
+begin
+  res := TResourceStream.Create(HInstance, Resource, ResourceType);
+
+  if BitmapOptions.Bitmap <> nil then
+    BitmapOptions.Bitmap.Free;
+
+  BitmapOptions.Bitmap := TBGRABitmap.Create(res);
+  res.Free;
+end;
+
+procedure TuECustomImageButton.LoadFromBitmapResource(Resource: string);
+begin
+  LoadFromBitmapResource(Resource, RT_RCDATA);
 end;
 
 procedure TuECustomImageButton.LoadFromBitmapFile;
@@ -1283,6 +1493,7 @@ end;
 procedure TuECustomImageButton.LoadGlyphFromFile(f:string);
 var p:TPicture;
 begin
+  if not FileExists(f) then exit;
   try
     p:=TPicture.Create;
     p.LoadFromFile(f);
@@ -1294,6 +1505,7 @@ end;
 
 procedure TuECustomImageButton.LoadImageFromFile(f: string);
 begin
+  if not FileExists(f) then exit;
   BitmapFile:=f;
   LoadFromBitmapFile;
 end;

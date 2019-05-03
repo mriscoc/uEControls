@@ -1,5 +1,5 @@
 {-----------------------------------------------------------------------------
-  TuEKnob v1.2 2018-01-18
+  TuEKnob v1.3 03/05/2019
   Author: Miguel A. Risco Castillo
   http://ue.accesus.com/uecontrols
 
@@ -15,6 +15,12 @@
   Software distributed under the Licenses is distributed on an "AS IS" basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses.
+
+  Release notes:
+
+  v1.3 03/05/2019
+  Remove deprecated property: TPicture
+
 -----------------------------------------------------------------------------}
 
 unit uEKnob;
@@ -141,8 +147,6 @@ type
 
   TuEKnob = class(TCustomuEKnob)
   published
-    //  This property is deprecated, use Image and LoadfromFile
-    property Picture;
     property Debug;
     property Max;
     property MaxAngle;

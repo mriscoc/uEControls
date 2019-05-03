@@ -8,7 +8,7 @@ unit uEControls;
 interface
 
 uses
-  uecontrolsreg, LazarusPackageIntf;
+  uecontrolsreg, uEImage, LazarusPackageIntf;
 
 implementation
 
