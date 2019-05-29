@@ -16,9 +16,6 @@ object MainForm: TMainForm
     Top = 0
     Width = 150
     Debug = False
-    Picture.Data = {
-      07544269746D617000000000
-    }
     Max = 60
     MaxAngle = 3600
     Min = 0
@@ -5775,9 +5772,6 @@ object MainForm: TMainForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       UniqueSize = True
-      Picture.Data = {
-        07544269746D617000000000
-      }
     end
   end
   object Timer1: TTimer

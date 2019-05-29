@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEBase v1.2.1  2018-08-30
+  uEBase v1.3.1  2019/05/27
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -20,6 +20,9 @@
   
   Release Notes
   
+  v1.3.1 2019/05/27
+  Change AssignBGRAtoImage for transparent image in Linux
+
   v1.2.1 2018-08-30
   Update cAbout
   
@@ -47,10 +50,12 @@ type
     FAbout:string;
     FBGRAColor: TBGRAPixel;
     FDebug:boolean;
+    FOnDrawControl: TNotifyEvent;
     FUpdateCount: Integer;
     FTransparent: Boolean;
     FBitmap: TBGRABitmap;
     function GetAbout: string;
+    procedure SetOnDrawControl(AValue: TNotifyEvent);
   protected
     procedure DoOnResize; override;
     function DestRect: TRect; virtual;
@@ -74,6 +79,7 @@ type
     property BGRAColor:TBGRAPixel read FBGRAColor write SetBGRAColor;
   published
     property Bitmap:TBGRABitmap read FBitmap write SetBitmap;
+    property OnDrawControl:TNotifyEvent read FOnDrawControl write SetOnDrawControl;
     property Transparent: Boolean read FTransparent write SetTransparent default true;
 //  This property allow to use rulers for properly alignment of images
     property Debug:boolean read FDebug write SetDebug;
@@ -111,6 +117,10 @@ begin
 end;
 
 procedure AssignBGRAtoImage(Source: TBGRABitmap; Dest: TBitmap);
+{$IFDEF LINUX}
+begin
+  Dest.Assign(Source.Bitmap);
+{$ELSE}
 var TempBitmap:TBitmap;
 begin
   try
@@ -121,12 +131,12 @@ begin
       SetSize(Source.Width,Source.Height);
       Canvas.Pixels[0,0]:=clBlack;
     end;
-//    Source.SetPixel(0,0,BGRAPixelTransparent);
     Source.Draw(TempBitmap.Canvas,0,0,true); //Replace with Source
     Dest.Assign(TempBitmap);
   finally
     if assigned(TempBitmap) then FreeThenNil(TempBitmap);
   end;
+  {$ENDIF}
 end;
 
 function Darken(Color:TColor; Percent:Byte):TBGRAPixel;
@@ -148,6 +158,7 @@ begin
   FDebug:=false;
   FAbout:=cAbout;
   FTransparent:= True;
+  FOnDrawControl:=nil;
   FBitmap:=TBGRABitmap.Create;
 end;
 
@@ -160,6 +171,12 @@ end;
 function TuEBaseControl.GetAbout: string;
 begin
   Result:=About;
+end;
+
+procedure TuEBaseControl.SetOnDrawControl(AValue: TNotifyEvent);
+begin
+  if FOnDrawControl=AValue then Exit;
+  FOnDrawControl:=AValue;
 end;
 
 procedure TuEBaseControl.SetBitmap(AValue: TBGRABitmap);
@@ -272,6 +289,7 @@ begin
     Canvas.Brush.Color:=Color;
     Canvas.FillRect(0,0,w,h);
   end;
+  if assigned(FOnDrawControl) then FOnDrawControl(Self);
   if assigned(FBitmap) then FBitmap.Draw(Canvas,DestRect,false);
   if csDesigning in ComponentState then DrawFrame;
   if FDebug then DrawRuler;

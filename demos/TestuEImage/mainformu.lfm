@@ -1,0 +1,34 @@
+object Form1: TForm1
+  Left = 1317
+  Height = 550
+  Top = 344
+  Width = 340
+  Caption = 'Form1'
+  ClientHeight = 550
+  ClientWidth = 340
+  OnCreate = FormCreate
+  LCLVersion = '2.0.3.0'
+  object uEImage1: TuEImage
+    Left = 8
+    Height = 256
+    Top = 8
+    Width = 322
+    Debug = False
+    BorderSpacing.Around = 100
+    Color = clWhite
+    ParentColor = False
+    Center = True
+    Proportional = True
+    Stretch = True
+  end
+  object Image1: TImage
+    Left = 8
+    Height = 256
+    Top = 280
+    Width = 320
+    BorderSpacing.InnerBorder = 100
+    Center = True
+    Proportional = True
+    Stretch = True
+  end
+end

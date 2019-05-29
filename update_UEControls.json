@@ -1,0 +1,15 @@
+{
+  "UpdateLazPackages" : [
+    {
+      "ForceNotify" : false,
+      "InternalVersion" : 7,
+      "Name" : "uecontrols.lpk",
+      "Version" : "6.5.20.353"
+    }
+  ],
+  "UpdatePackageData" : {
+    "DisableInOPM" : false,
+    "DownloadZipURL" : "https://github.com/mriscoc/uEControls/archive/master.zip",
+    "Name" : "uEControls"
+  }
+}

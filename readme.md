@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------------
-#**ueControls v6.4 - Set of instrumentation controls for Lazarus IDE**
+#**ueControls v6.5 - Set of instrumentation controls for Lazarus IDE**
 - - -
 
-![](https://sites.google.com/site/mikroelectronica/uecontrols/toobar.png)
+![](toobar.png)
   
 Open source set of instrumentation controls for Lazarus and Free Pascal,
 compilable under Windows and Linux.

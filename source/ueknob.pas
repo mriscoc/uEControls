@@ -131,7 +131,7 @@ type
     property ValuesMargin:integer read FValuesMargin write SetValueMargin default 8;
     property ValuesFont:TFont read FValuesFont write SetValuesFont;
     property Transparent:Boolean read FTransparent write SetTransparent default true;
-    property DefKnobRadius:integer read FDefKnobRadius write SetDefKnobRadius default 34;
+    property DefKnobRadius:integer read FDefKnobRadius write SetDefKnobRadius default 33;
     property BackImage: TBitmap read FBackImage write SetBackground;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnBackgroundChanged: TNotifyEvent read FOnBackgroundChanged write FOnBackgroundChanged;
@@ -309,7 +309,7 @@ end;
 
 procedure TCustomuEKnob.SetupDefaults;
 begin
-  FDefKnobRadius:=34;
+  FDefKnobRadius:=33;
   FPosition:=0;
   FMax:=100;
   FMin:=0;

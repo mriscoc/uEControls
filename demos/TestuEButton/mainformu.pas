@@ -5,9 +5,9 @@ unit mainformu;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, CheckBoxThemed, Forms, Controls, Graphics,
-  Dialogs, StdCtrls, Buttons, uebutton, uETileImage, uERotImage, ueBase,
-  BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Buttons, uebutton, uETileImage, ueBase, uEImage, BGRABitmap,
+  BGRABitmapTypes;
 
 type
 
@@ -18,10 +18,10 @@ type
     StaticText1: TStaticText;
     uEButton1: TuEButton;
     uEButton2: TuEButton;
-    uERotImage1: TuERotImage;
+    uEImage: TuEImage;
     uETileImage1: TuETileImage;
     procedure CB_SkinChange(Sender: TObject);
-    procedure uERotImage1BeforeRotation(Sender: TObject);
+    procedure uEImagePaint(Sender: TObject);
   private
     { private declarations }
   public
@@ -40,18 +40,18 @@ implementation
 procedure TForm1.CB_SkinChange(Sender: TObject);
 begin
   if CB_Skin.Checked then
-    uEButton2.LoadImageFromBGRA(uERotImage1.Bitmap)
+    uEButton2.LoadImageFromBGRA(uEImage.Bitmap)
   else
     uEButton2.Image.Clear;
 end;
 
-procedure TForm1.uERotImage1BeforeRotation(Sender: TObject);
+procedure TForm1.uEImagePaint(Sender: TObject);
 var
   i,h,y:integer;
   r:integer;
   c0,c1,c2,c3:TBGRAPixel;
 begin
-  With uERotImage1 do
+  With uEImage do
   begin
     r:=Width;
     h:=Height div 4;
@@ -93,6 +93,7 @@ begin
     end;
   end;
 end;
+
 
 end.
 

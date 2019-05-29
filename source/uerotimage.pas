@@ -44,7 +44,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Types, BGRABitmap, BGRABitmapTypes,uEBase;
+  Types, BGRABitmap, BGRABitmapTypes, uEBase, Math;
 
 type
 
@@ -214,7 +214,7 @@ end;
 procedure TCustomuERotImage.RenderControl;
 var
   w,h:integer;
-  xc,yc,ox,oy:single;
+  xc,yc,ox,oy:real;
   tbmp:TBGRABitmap;
 begin
   if (csLoading in ComponentState) or (csCreating in FControlState) or IsUpdating then Exit;
@@ -224,33 +224,24 @@ begin
   DoBeforeRotation;
   //
   tbmp:=TBGRABitmap.Create;
-  if not FImage.Empty then tbmp.Assign(FImage) else
-  begin
+  if not FImage.Empty then tbmp.Assign(FImage)
+  else begin
     tbmp.Assign(Bitmap);
     Bitmap.Fill(BGRAPixelTransparent);
   end;
   w:=tbmp.width;
   h:=tbmp.height;
-//  xc:=w/2;
-//  yc:=h/2;
-  xc:=w/2-0.5;
-  yc:=h/2-0.5;
-  if FCenter then
-  begin
-//    ox:=xc+(Bitmap.Width-w)/2-0.5;
-//    oy:=yc+(Bitmap.Height-h)/2-0.5;
-    ox:=xc+(Bitmap.Width-w)/2;
-    oy:=yc+(Bitmap.Height-h)/2;
-  end else
-  begin
-    ox:=FOffsetX;
-    oy:=FOffsetY;
-  end;
+  xc:=w div 2;
+  yc:=h div 2;
+  ox:=(Bitmap.Width div 2)-xc;
+  oy:=(Bitmap.Height div 2)-yc;
+  if (w mod 2)=0 then xc:=xc-0.5;
+  if (h mod 2)=0 then yc:=yc-0.5;
+  Bitmap.PutImageAngle(ox,oy,tbmp,FAngle,xc,yc,255,true,true);
   if Debug then
   begin
     Bitmap.Rectangle(0,0,Bitmap.Width,Bitmap.Height,ColorToBGRA(clBlue),dmSet);
   end;
-  Bitmap.PutImageAngle(ox,oy,tbmp,FAngle,xc,yc,255,true,true);
   if assigned (tbmp) then tbmp.free;
   //
   DoRotation;
@@ -270,7 +261,7 @@ begin
     exit;
   end else
   begin
-    FMaxSize := Round(Sqrt(Sqr(FImage.Width) + Sqr(FImage.Height)))+1;
+    FMaxSize := Round(Sqrt(Sqr(FImage.Width) + Sqr(FImage.Height)));
     if UniqueSize then Bitmap.SetSize(FMaxSize,FMaxSize)
     else begin
       iw:=FImage.width;
@@ -278,15 +269,8 @@ begin
       rad:=FAngle*PI/180;
       s:=abs(sin(rad));
       c:=abs(cos(rad));
-      if Center then
-      begin
-        w:= round(iw*c + ih*s)+1;
-        h:= round(iw*s + ih*c)+1;
-       end else
-      begin
-        w:= round(iw*c/2 + ih*s/2 + FOffsetX)+1;
-        h:= round(iw*s/2 + ih*c/2 + FOffsetY)+1;
-      end;
+      w:= round(2*(iw*c/2 + ih*s/2));
+      h:= round(2*(iw*s/2 + ih*c/2));
       Bitmap.SetSize(w,h);
     end;
   end;
@@ -423,42 +407,52 @@ end;
 
 function TCustomuERotImage.DestRect: TRect;
 var
-  PicWidth,PicHeight: Integer;
-  ImgWidth,ImgHeight: Integer;
-  ChangeX,ChangeY: Integer;
-  w,h: Integer;
+  BitmapW,BitmapH: Integer;
+  x,y,w,h:integer;
+  s:real;
+//Bitmap es la imagen rotada
+//FImage es la imagen original
 begin
   if not Assigned(Bitmap) then exit;
-  PicWidth := Bitmap.Width;
-  PicHeight := Bitmap.Height;
-  ImgWidth := ClientWidth;
-  ImgHeight := ClientHeight;
-  if Stretch or (Proportional and ((PicWidth > ImgWidth) or (PicHeight > ImgHeight))) then
+  BitmapW := Bitmap.Width;
+  BitmapH := Bitmap.Height;
+
+  if FStretch then
   begin
-    if Proportional and (PicWidth > 0) and (PicHeight > 0) then
+    if FProportional then
     begin
-      w:=ImgWidth;
-      h:=(PicHeight*w) div PicWidth;
-      if h>ImgHeight then
-      begin
-        h:=ImgHeight;
-        w:=(PicWidth*h) div PicHeight;
-      end;
-      PicWidth:=w;
-      PicHeight:=h;
-    end
-    else begin
-      PicWidth := ImgWidth;
-      PicHeight := ImgHeight;
+      s:=min(ClientWidth/BitmapW,ClientHeight/BitmapH);
+      w:=Round(BitmapW*s);
+      h:=Round(BitmapH*s);
+    end else
+    begin
+      w:=ClientWidth;
+      h:=ClientHeight;
+    end;
+    if FCenter then
+    begin
+      x:=ClientWidth div 2 - w div 2;
+      y:=ClientHeight div 2 - h div 2;
+    end else
+    begin
+      x:=0;
+      y:=0;
+    end;
+  end else
+  begin
+    w:=BitmapW;
+    h:=BitmapH;
+    if FCenter then
+    begin
+      x:=ClientWidth div 2 - w div 2-1;
+      y:=ClientHeight div 2 - h div 2-1;
+    end else
+    begin
+      x:=FOffsetX-w div 2-1;
+      y:=FOffsetY-h div 2-1;
     end;
   end;
-  Result:=Rect(0,0,PicWidth,PicHeight);
-  if Center then
-  begin
-    ChangeX := (ImgWidth-PicWidth) div 2;
-    ChangeY := (ImgHeight-PicHeight) div 2;
-    OffsetRect(Result, ChangeX, ChangeY);
-  end;
+  Result:=Rect(x,y,x+w,y+h);
 end;
 
 end.

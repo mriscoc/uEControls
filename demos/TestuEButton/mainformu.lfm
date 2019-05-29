@@ -1,17 +1,17 @@
 object Form1: TForm1
-  Left = 1221
+  Left = 1443
   Height = 171
-  Top = 406
-  Width = 164
+  Top = 473
+  Width = 176
   Caption = 'Form1'
   ClientHeight = 171
-  ClientWidth = 164
-  LCLVersion = '1.8.0.6'
+  ClientWidth = 176
+  LCLVersion = '2.0.3.0'
   object uETileImage1: TuETileImage
     Left = 0
     Height = 171
     Top = 0
-    Width = 164
+    Width = 176
     Debug = False
     Align = alClient
     Image.Data = {
@@ -7219,16 +7219,6 @@ object Form1: TForm1
       02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF
     }
   end
-  object uERotImage1: TuERotImage
-    Left = 96
-    Height = 128
-    Top = 32
-    Width = 32
-    Debug = False
-    Angle = 0
-    Center = True
-    OnBeforeRotation = uERotImage1BeforeRotation
-  end
   object uEButton1: TuEButton
     Left = 8
     Height = 42
@@ -7554,7 +7544,6 @@ object Form1: TForm1
     Layout = blGlyphLeft
     TextShadowColor = clNone
     Spacing = 0
-    Animation = False
     BitmapOptions.MarginTop = 4
     BitmapOptions.MarginRight = 4
     BitmapOptions.MarginBottom = 4
@@ -8089,7 +8078,6 @@ object Form1: TForm1
     Layout = blGlyphTop
     TextShadowColor = clBlack
     Spacing = 0
-    Animation = False
     BitmapOptions.MarginTop = 2
     BitmapOptions.MarginRight = 2
     BitmapOptions.MarginBottom = 2
@@ -8118,5 +8106,16 @@ object Form1: TForm1
     Font.Color = clWhite
     ParentFont = False
     TabOrder = 1
+  end
+  object uEImage: TuEImage
+    Left = 96
+    Height = 128
+    Top = 32
+    Width = 32
+    OnDrawControl = uEImagePaint
+    Debug = False
+    Center = True
+    Proportional = False
+    Stretch = False
   end
 end

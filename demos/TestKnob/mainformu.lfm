@@ -26,9 +26,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 126
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {
@@ -294,9 +291,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 126
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {
@@ -647,9 +641,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 160
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {
@@ -1826,9 +1817,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 68
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {
@@ -2008,9 +1996,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 160
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {
@@ -3187,9 +3172,6 @@ object MainForm: TMainForm
       Top = 0
       Width = 160
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       MaxAngle = 2700
       Min = 0
@@ -4370,9 +4352,6 @@ object MainForm: TMainForm
       Width = 160
       Transparent = False
       Debug = False
-      Picture.Data = {
-        07544269746D617000000000
-      }
       Max = 100
       Min = 0
       Image.Data = {

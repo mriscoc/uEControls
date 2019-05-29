@@ -52,7 +52,7 @@ type
     class function GetControlClassDefaultSize: TSize; override;
     procedure DrawControl; override;
     property Canvas: TCanvas read GetCanvas;
-    property BorderSpacing;
+    //property BorderSpacing;
     property Image: TBitmap read FImage write SetImage;
     property OnImageChanged: TNotifyEvent read FOnImageChanged write FOnImageChanged;
     property Center: Boolean read FCenter write SetCenter;
@@ -62,6 +62,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function LoadFromFile(f:string):boolean; virtual;
+    function DestRect: TRect; override;
   end;
 
 
@@ -152,38 +153,58 @@ begin
   result:=true;
 end;
 
-procedure TCustomuEImage.DrawControl;
+function TCustomuEImage.DestRect: TRect;
 var
+  BitmapW,BitmapH: Integer;
   x,y,w,h:integer;
   s:real;
+//Bitmap es la imagen final
+//FImage es la imagen original
 begin
-  Bitmap.SetSize(0,0); // Evita que uEBase redibuje Bitmap
-  inherited;
-  If  assigned(FImage) and (FImage.Width>0) and (FImage.Height > 0) then
+  if not Assigned(Bitmap) then exit;
+  BitmapW := Bitmap.Width;
+  BitmapH := Bitmap.Height;
+  if FStretch then
   begin
-    Bitmap.assign(FImage);
     if FProportional then
     begin
-      s:=min(ClientWidth/Bitmap.Width,ClientHeight/Bitmap.Height);
-      w:=Round(Bitmap.Width*s);
-      h:=Round(Bitmap.Height*s);
+      s:=min(ClientWidth/BitmapW,ClientHeight/BitmapH);
+      w:=Round(BitmapW*s);
+      h:=Round(BitmapH*s);
     end else
     begin
       w:=ClientWidth;
       h:=ClientHeight;
     end;
-    if FStretch then Bitmap:=Bitmap.Resample(w,h) as TBGRABitmap;
-    if FCenter then
-    begin
-      x:=(ClientWidth-Bitmap.Width) div 2;
-      y:=(ClientHeight-Bitmap.Height) div 2;
-    end else
-    begin
-      x:=0;
-      y:=0;
-    end;
-    Bitmap.Draw(Canvas,x,y,false);
+  end else
+  begin
+    w:=BitmapW;
+    h:=BitmapH;
   end;
+  if FCenter then
+  begin
+    x:=(ClientWidth  - w) div 2;
+    y:=(ClientHeight - h) div 2;
+  end else
+  begin
+    x:=0;
+    y:=0;
+  end;
+  Result:=Rect(x,y,x+w,y+h);
+end;
+
+procedure TCustomuEImage.DrawControl;
+var
+  R:TRect;
+begin
+  Bitmap.SetSize(0,0); // Evita que uEBase redibuje Bitmap
+  If  assigned(FImage) and (FImage.Width>0) and (FImage.Height > 0) then
+  begin
+    Bitmap.assign(FImage);
+    R:=DestRect;
+    Bitmap:=Bitmap.Resample(R.Width,R.Height) as TBGRABitmap;
+  end;
+  inherited;
 end;
 
 function TCustomuEImage.GetCanvas: TCanvas;

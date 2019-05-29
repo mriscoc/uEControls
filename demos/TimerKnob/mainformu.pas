@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   BGRABitmapTypes,
-  ExtCtrls, StdCtrls, ExtDlgs, uEKnob, ueled, uERotImage;
+  ExtCtrls, StdCtrls, uEKnob, ueled, uERotImage;
 
 type
 
