@@ -14,12 +14,6 @@ Lima – Perú
 For use these controls you must first download the graphics library **BGRABitmap**:  
 <http://wiki.lazarus.freepascal.org/BGRABitmap>  
 <http://sourceforge.net/projects/lazpaint/files/src/>  
-
-**Important:**  
-  To install uEControls you must first remove **BGRAControls**, it have an old version
-  of uEControls that conflicts with the new version. You will be able to reinstall
-  BGRAControls by removing all ue*.pas files in the BGRAControls folder and references
-  in its package. 
  
 **License:**
   
