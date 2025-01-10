@@ -86,7 +86,7 @@ Function Build-Project {
             }
             $Output | Out-Host
             Return $exitCode
-K        }
+        }
         Default {0}
     }) + (
         (Get-ChildItem -Filter '*.lpi' -Recurse -File –Path $Var.app).FullName |
