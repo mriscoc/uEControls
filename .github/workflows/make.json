@@ -1,8 +1,0 @@
-{
-    "app" : "demos",
-    "lib" : ".",
-    "tst" : "tst",
-    "pkg" : [
-        "BGRABitmap"
-    ]
-}

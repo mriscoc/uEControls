@@ -139,7 +139,7 @@ begin
       begin
         ExitCode += 1;
         for Line in SplitString(Output, LineEnding) do
-          if Pos('Fatal', Line) <> 0 and Pos('Error', Line) then
+          if Pos('Fatal', Line) <> 0 or Pos('Error', Line) then
             Writeln(#27'[31m', Line, #27'[0m');
       end;
     end;
