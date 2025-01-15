@@ -8,53 +8,118 @@ uses
   FileUtil,
   Zipper,
   fphttpclient,
+  RegExpr,
   openssl,
   opensslsockets,
   Process;
 
 const
-  Src: string = 'demos';
-  Use: string = '.';
-  Tst: string = 'testconsole.lpi';
-  Pkg: array of string = ('BGRABitmap');
+  Target: string = 'demos';
+  Dependencies: array of string = ('BGRABitmap');
 
-var
-  Output, Line: ansistring;
-  List: TStringList;
-  Each, Item, PackagePath, TempFile, Url: string;
-  Zip: TStream;
+type
+  Output = record
+    Code: boolean;
+    Output: ansistring;
+  end;
 
-begin
-  InitSSLInterface;
-  if FileExists('.gitmodules') then
-    if RunCommand('git', ['submodule', 'update', '--init', '--recursive',
-      '--force', '--remote'], Output) then
-      Writeln(#27'[33m', Output, #27'[0m')
-    else
+  function CheckModules: Output;
+  begin
+    if FileExists('.gitmodules') then
+      if RunCommand('git', ['submodule', 'update', '--init', '--recursive',
+        '--force', '--remote'], Result.Output) then
+        Writeln(stderr, #27'[33m', Result.Output, #27'[0m');
+  end;
+
+  function AddPackage(Path: string): Output;
+  begin
+    with TRegExpr.Create do
     begin
-      ExitCode += 1;
-      Writeln(#27'[31m', Output, #27'[0m');
+      Expression :=
+        {$IFDEF MSWINDOWS}
+        '(cocoa|x11|_template)'
+      {$ELSE}
+        '(cocoa|gdi|_template)'
+      {$ENDIF}
+      ;
+      if not Exec(Path) and RunCommand('lazbuild', ['--add-package-link', Path],
+        Result.Output) then
+        Writeln(stderr, #27'[33m', 'added ', Path, #27'[0m');
+      Free;
     end;
-  List := FindAllFiles(Use, '*.lpk', True);
-  try
-    for Each in List do
-      if RunCommand('lazbuild', ['--add-package-link', Each], Output) then
-        Writeln(#27'[33m', 'added ', Each, #27'[0m')
+  end;
+
+  function BuildProject(Path: string): Output;
+  var
+    Line: string;
+  begin
+    Write(stderr, #27'[33m', 'build from ', Path, #27'[0m');
+    try
+      Result.Code := RunCommand('lazbuild', ['--build-all', '--recursive',
+        '--no-write-project', Path], Result.Output);
+      if Result.Code then
+        for Line in SplitString(Result.Output, LineEnding) do
+        begin
+          if ContainsStr(Line, 'Linking') then
+          begin
+            Result.Output := SplitString(Line, ' ')[2];
+            Writeln(stderr, #27'[32m', ' to ', Result.Output, #27'[0m');
+            break;
+          end;
+        end
       else
       begin
         ExitCode += 1;
-        Writeln(#27'[31m', 'added ', Each, #27'[0m');
+        for Line in SplitString(Result.Output, LineEnding) do
+          with TRegExpr.Create do
+          begin
+            Expression := '(Fatal|Error):';
+            if Exec(Line) then
+            begin
+              WriteLn(stderr);
+              Writeln(stderr, #27'[31m', Line, #27'[0m');
+            end;
+            Free;
+          end;
       end;
-  finally
-    List.Free;
+    except
+      on E: Exception do
+        WriteLn(stderr, 'Error: ' + E.ClassName + #13#10 + E.Message);
+    end;
   end;
-  for Each in Pkg do
+
+  function RunTest(Path: string): Output;
+  var
+    Temp: string;
   begin
-    PackagePath := GetEnvironmentVariable('HOME') +
-      '/.lazarus/onlinepackagemanager/packages/' + Each;
+    Result := BuildProject(Path);
+    Temp:= Result.Output;
+    if Result.Code then
+        try
+          if not RunCommand(Temp, ['--all', '--format=plain', '--progress'], Result.Output) then
+            ExitCode += 1;
+          WriteLn(stderr, Result.Output);
+        except
+          on E: Exception do
+            WriteLn(stderr, 'Error: ' + E.ClassName + #13#10 + E.Message);
+        end;
+  end;
+
+  function AddOPM(Each: string): string;
+  var
+    TempFile, Url: string;
+    Zip: TStream;
+  begin
+    Result :=
+      {$IFDEF MSWINDOWS}
+      GetEnvironmentVariable('APPDATA') + '\.lazarus\onlinepackagemanager\packages\'
+      {$ELSE}
+      GetEnvironmentVariable('HOME') + '/.lazarus/onlinepackagemanager/packages/'
+      {$ENDIF}
+      + Each;
     TempFile := GetTempFileName;
     Url := 'https://packages.lazarus-ide.org/' + Each + '.zip';
-    if not DirectoryExists(PackagePath) then
+    if not DirectoryExists(Result) then
     begin
       Zip := TFileStream.Create(TempFile, fmCreate or fmOpenWrite);
       with TFPHttpClient.Create(nil) do
@@ -63,90 +128,71 @@ begin
           AddHeader('User-Agent', 'Mozilla/5.0 (compatible; fpweb)');
           AllowRedirect := True;
           Get(Url, Zip);
-          WriteLn('Download from ', Url, ' to ', TempFile);
+          WriteLn(stderr, 'Download from ', Url, ' to ', TempFile);
         finally
           Free;
         end;
       end;
       Zip.Free;
-      CreateDir(PackagePath);
+      CreateDir(Result);
       with TUnZipper.Create do
       begin
         try
           FileName := TempFile;
-          OutputPath := PackagePath;
+          OutputPath := Result;
           Examine;
           UnZipAllFiles;
-          WriteLn('Unzip from ', TempFile, ' to ', PackagePath);
+          WriteLn(stderr, 'Unzip from ', TempFile, ' to ', Result);
         finally
           Free;
         end;
       end;
       DeleteFile(TempFile);
-      List := FindAllFiles(PackagePath, '*.lpk', True);
+    end;
+  end;
+
+  function Main: Output;
+  var
+    Each, Item: string;
+    List: TStringList;
+  begin
+    CheckModules;
+    InitSSLInterface;
+    for Each in Dependencies do
+    begin
+      List := FindAllFiles(AddOPM(Each), '*.lpk', True);
       try
         for Item in List do
-          if RunCommand('lazbuild', ['--add-package-link', Item], Output) then
-            Writeln(#27'[33m', 'added ', Item, #27'[0m')
-          else
-          begin
-            ExitCode += 1;
-            Writeln(#27'[31m', 'added ', Item, #27'[0m');
-          end;
+          AddPackage(Item);
       finally
         List.Free;
       end;
     end;
-  end;
-  List := FindAllFiles('.', Tst, True);
-  try
-    for Each in List do
-    begin
-      Writeln(#27'[33m', 'build ', Each, #27'[0m');
-      if RunCommand('lazbuild', ['--build-all', '--recursive',
-        '--no-write-project', Each], Output) then
-        for Line in SplitString(Output, LineEnding) do
-        begin
-          if Pos('Linking', Line) <> 0 then
-          begin
-            if not RunCommand('command', [SplitString(Line, ' ')[2],
-              '--all', '--format=plain', '--progress'], Output) then
-              ExitCode += 1;
-            WriteLn(Output);
-          end;
-        end
-      else
-        for Line in SplitString(Output, LineEnding) do
-          if Pos('Fatal', Line) <> 0 or Pos('Error', Line) then
-            Writeln(#27'[31m', Line, #27'[0m');
+    List := FindAllFiles('.', '*.lpk', True);
+    try
+      for Each in List do
+        AddPackage(Each);
+    finally
+      List.Free;
     end;
-  finally
-    List.Free;
-  end;
-  List := FindAllFiles(Src, '*.lpi', True);
-  try
-    for Each in List do
-    begin
-      Write(#27'[33m', 'build from ', Each, #27'[0m');
-      if RunCommand('lazbuild', ['--build-all', '--recursive',
-        '--no-write-project', Each], Output) then
-        for Line in SplitString(Output, LineEnding) do
-        begin
-          if Pos('Linking', Line) <> 0 then
-            Writeln(#27'[32m', ' to ', SplitString(Line, ' ')[2], #27'[0m');
-        end
-      else
-      begin
-        ExitCode += 1;
-        for Line in SplitString(Output, LineEnding) do
-          if Pos('Fatal:', Line) <> 0 or Pos('Error:', Line) then
-            begin
-              WriteLn();
-              Writeln(#27'[31m', Line, #27'[0m');
-            end;
-      end;
+    List := FindAllFiles(Target, '*.lpi', True);
+    try
+      for Each in List do
+        if ContainsStr(ReadFileToString(ReplaceStr(Each, '.lpi', '.lpr')),
+          'consoletestrunner') then
+          RunTest(Each)
+        else
+          BuildProject(Each);
+    finally
+      List.Free;
     end;
-  finally
-    List.Free;
+    WriteLn(stderr);
+    if ExitCode <> 0 then
+      WriteLn(stderr, #27'[31m', 'Errors: ', ExitCode, #27'[0m')
+    else
+      WriteLn(stderr, #27'[32m', 'Errors: ', ExitCode, #27'[0m');
   end;
+
+begin
+  Main;
 end.
