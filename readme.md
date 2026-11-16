@@ -20,7 +20,7 @@ For use these controls you must first download the graphics library **BGRABitmap
   This software may not be included into library collections and similar compilations
   which are sold. If you want to distribute this code for money then contact me
   first and ask for the permission of the author: Miguel A. Risco-Castillo
-  http://ue.accesus.com/uecontrols
+  [http://ue.accesus.com/uecontrols](https://ue.accesus.com/home/uecontrols)
 
   FOR COMMERCIAL PURPOSES REQUEST THE APPROPRIATE LICENSE FROM THE AUTHOR.
 
