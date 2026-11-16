@@ -1,5 +1,5 @@
 {-----------------------------------------------------------------------------
-  TuESelector v1.3 03/05/2019
+  TuESelector v1.4 2026-11-15
   Author: Miguel A. Risco Castillo
   http://ue.accesus.com/uecontrols
 
@@ -18,6 +18,9 @@
 
   Release notes:
 
+  v1.4 2026-11-15
+  Added LazUtilities dependency
+
   v1.3 03/05/2019
   Remove deprecated property: TPicture
 
@@ -31,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  LCLIntf, LCLType, LCLProc, Types,
+  LazUtilities, LCLIntf, LCLType, LCLProc, Types,
   BGRABitmap, BGRABitmapTypes, uEBase, uEKnob;
 
 type

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="6">
     <Name Value="uEControls"/>
     <Type Value="RunAndDesignTime"/>
     <AddToProjectUsesSection Value="True"/>
@@ -17,6 +17,11 @@
           <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
+      <CodeGeneration>
+        <Optimizations>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
       <Linking>
         <Debugging>
           <GenerateDebugInfo Value="False"/>
@@ -50,80 +55,80 @@
   Software distributed under the Licenses is distributed on an &quot;AS IS&quot; basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses. "/>
-    <Version Major="6" Minor="5" Release="20" Build="353"/>
-    <Files Count="13">
-      <Item1>
+    <Version Major="6" Minor="6" Release="1" Build="355"/>
+    <Files>
+      <Item>
         <Filename Value="source/uecontrolsreg.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="uecontrolsreg"/>
-      </Item1>
-      <Item2>
+      </Item>
+      <Item>
         <Filename Value="source/uecontrols.lrs"/>
         <Type Value="LRS"/>
-      </Item2>
-      <Item3>
+      </Item>
+      <Item>
         <Filename Value="source/uebase.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uEBase"/>
-      </Item3>
-      <Item4>
+      </Item>
+      <Item>
         <Filename Value="source/uebutton.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uebutton"/>
-      </Item4>
-      <Item5>
+      </Item>
+      <Item>
         <Filename Value="source/uegauge.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uEGauge"/>
-      </Item5>
-      <Item6>
+      </Item>
+      <Item>
         <Filename Value="source/ueknob.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uEKnob"/>
-      </Item6>
-      <Item7>
+      </Item>
+      <Item>
         <Filename Value="source/ueled.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="ueled"/>
-      </Item7>
-      <Item8>
+      </Item>
+      <Item>
         <Filename Value="source/uemultiturn.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uEMultiTurn"/>
-      </Item8>
-      <Item9>
+      </Item>
+      <Item>
         <Filename Value="source/uerotimage.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uERotImage"/>
-      </Item9>
-      <Item10>
+      </Item>
+      <Item>
         <Filename Value="source/ueselector.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uESelector"/>
-      </Item10>
-      <Item11>
+      </Item>
+      <Item>
         <Filename Value="source/uetileimage.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uETileImage"/>
-      </Item11>
-      <Item12>
+      </Item>
+      <Item>
         <Filename Value="source/uetilepanel.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uETilePanel"/>
-      </Item12>
-      <Item13>
+      </Item>
+      <Item>
         <Filename Value="source/ueimage.pas"/>
         <UnitName Value="uEImage"/>
-      </Item13>
+      </Item>
     </Files>
-    <RequiredPkgs Count="2">
-      <Item1>
+    <RequiredPkgs>
+      <Item>
         <PackageName Value="BGRABitmapPack"/>
-      </Item1>
-      <Item2>
+      </Item>
+      <Item>
         <PackageName Value="LCL"/>
         <MinVersion Major="1" Valid="True"/>
-      </Item2>
+      </Item>
     </RequiredPkgs>
     <UsageOptions>
       <CustomOptions Value="-dUseCThreads"/>

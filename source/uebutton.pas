@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEButton v1.5 2018-11-04
+  uEButton v1.6 2020-04-07
   Author: Miguel A. Risco-Castillo
 
   Forked from BCImageButton of BGRAControls, Author: Lainz.
@@ -11,6 +11,9 @@
   - support for button layouts
   - shadow for text (use clNone for disable shadow)
   - redraw when properties (caption, font, etc.) are changed
+
+  v1.6 2020-04-07
+  - Initialize some variables
 
   v1.5 2018-11-04
   - Improved Animation
@@ -1099,6 +1102,12 @@ procedure TuECustomImageButton.RenderControl;
         tx:=(Width-FGlyph.Width-FSpacing-ts.cx) div 2;
         ty:=(Height-ts.cy) div 2;
       end;
+      else begin
+        gx:=0;
+        gy:=0;
+        tx:=0;
+        ty:=0;
+      end;
     end;
 
     if Greyed then SetBitmap(TBGRABitmap(Bitmap.FilterGrayscale));
@@ -1308,6 +1317,12 @@ begin
         c2:=BGRAWhite;                    // InnerFrame / TopGradient c2 to 25% c3
         c3:=ColorToBGRA(clSilver);        // BotomGradient c3 to c0
         end;
+      else begin
+        c0:=BGRAWhite;
+        c1:=BGRAWhite;
+        c2:=BGRAWhite;
+        c3:=BGRAWhite;
+      end;
     end;
     Bitmap.FillRect(2,y+2,r-2,y+h-2,c0,dmSet); //Background
     Bitmap.GradientFill(2,y+2,r-2,y+h-2,c3,c0,gtRadial,PointF(r div 2,y+h),PointF(r,y+h),dmset); //BotomGradient

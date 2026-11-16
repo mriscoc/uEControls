@@ -1,7 +1,7 @@
 {-------------------------------------------------------------------------------------
-  TuETilePanel v1.1  2016-01-24
+  TuETilePanel v1.2  2026-11-15
   Author: Miguel A. Risco-Castillo
-  http://ue.accesus.com/uecontrols
+  https://ue.accesus.com/home/uecontrols
 
   THE COPYRIGHT NOTICES IN THE SOURCE CODE MAY NOT BE REMOVED OR MODIFIED.
   IF YOU MODIFY AND/OR DISTRIBUTE THE CODE TO ANY THIRD PARTY THEN YOU MUST NOT
@@ -16,6 +16,9 @@
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
   the specific language governing rights and limitations under the Licenses.
 
+  v1.2 2026-11-15
+  - Added LazUtilities dependency
+
   v1.1 2016-01-24
   - Add loadfromfile to support multiple image formats.
 
@@ -28,7 +31,8 @@ unit uETilePanel;
 interface
 
 uses
-  Classes, SysUtils, LResources, Controls, ExtCtrls, LCLProc, Graphics, uETileImage;
+  Classes, SysUtils, LResources, Controls, ExtCtrls,
+  LazUtilities, LCLProc, Graphics, uETileImage;
 
 type
 

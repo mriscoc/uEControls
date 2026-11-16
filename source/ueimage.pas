@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEImage v1.0  03/05/2019
+  uEImage v1.2  2026-11-15
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Types, BGRABitmap, BGRABitmapTypes, uEBase, LCLType, LCLIntf, math;
+  Types, BGRABitmap, BGRABitmapTypes, uEBase, LazUtilities, LCLType, LCLIntf, math;
 
 type
 
@@ -161,9 +161,13 @@ var
 //Bitmap es la imagen final
 //FImage es la imagen original
 begin
-  if not Assigned(Bitmap) then exit;
-  BitmapW := Bitmap.Width;
-  BitmapH := Bitmap.Height;
+  if not Assigned(Bitmap) then
+  begin
+    Result:=Rect(0,0,ClientWidth,ClientHeight);
+    exit;
+  end;
+  BitmapW := max(1,Bitmap.Width);
+  BitmapH := max(1,Bitmap.Height);
   if FStretch then
   begin
     if FProportional then

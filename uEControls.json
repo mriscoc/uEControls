@@ -1,0 +1,33 @@
+{
+  "PackageData0" : {
+    "Name" : "uEControls",
+    "DisplayName" : "uEControls",
+    "Category" : "Graphics, Indicators and Gauges",
+    "CommunityDescription" : "Set of instrumentation controls for Lazarus IDE",
+    "ExternalDependecies" : "",
+    "OrphanedPackage" : 0,
+    "RepositoryFileName" : "uEControls.zip",
+    "RepositoryFileSize" : 322798,
+    "RepositoryFileHash" : "a8454dd9b931a712aefdfef5a83d70b3",
+    "RepositoryDate" : 4.6341949869502314E+004,
+    "PackageBaseDir" : "uEControls\\/",
+    "HomePageURL" : "https://ue.accesus.com/home/uecontrols",
+    "DownloadURL" : "",
+    "SVNURL" : ""
+  },
+  "PackageFiles0" : [
+    {
+      "Name" : "uecontrols.lpk",
+      "Description" : "Set of instrumentation controls for Lazarus IDE",
+      "Author" : "Miguel A. Risco Castillo",
+      "License" : "  Copyright:\r\n  \r\n  This software may not be included into library collections and similar compilations\r\n  which are sold. If you want to distribute this code for money then contact me\r\n  first and ask for the permission of the author: Miguel A. Risco-Castillo\r\n  http://ue.accesus.com/uecontrols\r\n\r\n  FOR COMMERCIAL PURPOSES REQUEST THE APPROPRIATE LICENSE FROM THE AUTHOR.\r\n\r\n  THE COPYRIGHT NOTICES IN THE SOURCE CODE MAY NOT BE REMOVED OR MODIFIED.\r\n  IF YOU MODIFY AND/OR DISTRIBUTE THE CODE TO ANY THIRD PARTY THEN YOU MUST NOT\r\n  VEIL THE ORIGINAL AUTHOR. IT MUST ALWAYS BE CLEARLY IDENTIFIABLE.\r\n  \r\n  The above include the prohibition of to remove the about property of the controls,\r\n  which is only visible at design time. \r\n\r\n  The contents of this file are subject in priority to the License in this header,\r\n  in the license.txt file (this) and the Mozilla Public License Version 1.1 (MPL);\r\n  you may not use this file except in compliance with these licenses. You may obtain\r\n  a copy of the MPL License at http://www.mozilla.org/MPL/MPL-1.1.html\r\n  \r\n  All derivated work included forks must follow the statements in this license.\r\n\r\n  Software distributed under the Licenses is distributed on an \"AS IS\" basis,\r\n  WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for\r\n  the specific language governing rights and limitations under the Licenses. ",
+      "RelativeFilePath" : "",
+      "VersionAsString" : "6.6.1",
+      "LazCompatibility" : "4.8.0, 4.6.0, 4.4.0, 4.2.0, 4.0.0, 3.8.0, 3.6.0, 3.4.0, 3.2.0, 3.0.0",
+      "FPCCompatibility" : "3.2.2, 3.2.0",
+      "SupportedWidgetSet" : "gtk2, win32/win64",
+      "PackageType" : 0,
+      "DependenciesAsString" : "BGRABitmapPack, LCL(1.0)"
+    }
+  ]
+}

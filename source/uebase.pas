@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  uEBase v1.3.1  2019/05/27
+  uEBase v1.4.1  2026-11-15
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -20,6 +20,12 @@
   
   Release Notes
   
+  v1.4.1 2026-11-15
+  Added LazUtilities dependency
+
+  v1.3.2 2019/05/30
+  Added lighten function
+
   v1.3.1 2019/05/27
   Change AssignBGRAtoImage for transparent image in Linux
 
@@ -35,11 +41,12 @@ unit uEBase;
 interface
 
 uses
-  Dialogs,
-  Classes, SysUtils, Controls, LCLProc, LCLType, Graphics, BGRABitmap, BGRABitmapTypes;
+  Dialogs, Classes, SysUtils, Controls,
+  LazUtilities, LCLProc, LCLType,
+  Graphics, BGRABitmap, BGRABitmapTypes;
 
 const
-  cAbout='uEControls v6.3 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
+  cAbout='uEControls v6.5 (c) Miguel A. Risco-Castillo'+LineEnding+'http://ue.accesus.com/uecontrols';
 
 type
 
@@ -83,7 +90,7 @@ type
     property Transparent: Boolean read FTransparent write SetTransparent default true;
 //  This property allow to use rulers for properly alignment of images
     property Debug:boolean read FDebug write SetDebug;
-//  uEControls v6.0 (c) Miguel A. Risco-Castillo http://ue.accesus.com/uecontrols'
+//  uEControls v6.5 (c) Miguel A. Risco-Castillo http://ue.accesus.com/uecontrols'
     property About:string read FAbout; // This property must not be removed to follow the licence statements
   end;
 
@@ -92,6 +99,7 @@ type
 procedure AssignFontToBGRA(Source: TFont; Dest: TBGRABitmap);
 procedure AssignBGRAtoImage(Source:TBGRABitmap; Dest:TBitmap);
 function Darken(Color:TColor; Percent:Byte):TBGRAPixel;
+function Lighten(Color:TColor; Percent:Byte):TBGRAPixel;
 
 implementation
 
@@ -147,6 +155,17 @@ begin
     red:=red-muldiv(red,Percent,100);  //Percent% closer to black
     green:=green-muldiv(green,Percent,100);
     blue:=blue-muldiv(blue,Percent,100);
+  end;
+end;
+
+function Lighten(Color:TColor; Percent:Byte):TBGRAPixel;
+begin
+  Result:=ColorToBGRA(ColorToRGB(Color));
+  With Result do
+  begin
+    red:=red+muldiv(red,Percent,100);  //Percent% closer to black
+    green:=green+muldiv(green,Percent,100);
+    blue:=blue+muldiv(blue,Percent,100);
   end;
 end;
 

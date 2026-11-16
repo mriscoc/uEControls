@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  TuERotImage v1.5  2019-05-03
+  TuERotImage v1.7  2026-11-15
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -20,6 +20,12 @@
   the specific language governing rights and limitations under the Licenses.
 
   Release Notes
+
+  v1.7 2026-11-15
+  Added LazUtilities dependency
+
+  v1.6 07/04/2020
+  Initialized result variable in DestRect
 
   v1.5 03/05/2019
   Remove deprecated property: TPicture
@@ -44,7 +50,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Types, BGRABitmap, BGRABitmapTypes, uEBase, Math;
+  Types, BGRABitmap, BGRABitmapTypes, uEBase, Math, LazUtilities;
 
 type
 
@@ -413,6 +419,7 @@ var
 //Bitmap es la imagen rotada
 //FImage es la imagen original
 begin
+  Result:=Rect(0,0,0,0);
   if not Assigned(Bitmap) then exit;
   BitmapW := Bitmap.Width;
   BitmapH := Bitmap.Height;

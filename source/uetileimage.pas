@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  TuETileImage v1.0  2015-05-19
+  TuETileImage v1.1  2026-11-15
   Author: Miguel A. Risco-Castillo
   http://ue.accesus.com/uecontrols
 
@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Types, BGRABitmap, BGRABitmapTypes, uEBase, LCLType, LCLIntf;
+  Types, BGRABitmap, BGRABitmapTypes, uEBase, LazUtilities, LCLType, LCLIntf;
 
 type
 
