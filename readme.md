@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
-**ueControls v6.5 - Set of instrumentation controls for Lazarus IDE**
+**ueControls v6.6 - Set of instrumentation controls for Lazarus IDE**
 - - -
 
 ![](toolbar.png)
@@ -20,7 +20,7 @@ For use these controls you must first download the graphics library **BGRABitmap
   This software may not be included into library collections and similar compilations
   which are sold. If you want to distribute this code for money then contact me
   first and ask for the permission of the author: Miguel A. Risco-Castillo
-  [http://ue.accesus.com/uecontrols](https://ue.accesus.com/home/uecontrols)
+  [http://ue.accesus.com/home/uecontrols](https://ue.accesus.com/home/uecontrols)
 
   FOR COMMERCIAL PURPOSES REQUEST THE APPROPRIATE LICENSE FROM THE AUTHOR.
 
@@ -40,5 +40,6 @@ For use these controls you must first download the graphics library **BGRABitmap
 
   Software distributed under the Licenses is distributed on an "AS IS" basis,
   WITHOUT WARRANTY OF ANY KIND, either expressed or implied. See the Licenses for
-  the specific language governing rights and limitations under the Licenses. 
+  the specific language governing rights and limitations under the Licenses.  
+  
 -----------------------------------------------------------------------------
